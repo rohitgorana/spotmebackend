@@ -2,7 +2,6 @@ const express = require('express')
 const router = express.Router()
 const models = require('../models')
 var config = require('../core/config');
-var bcrypt = require('bcrypt')
 var jwt = require('jsonwebtoken')
 
 router.post(
@@ -18,7 +17,7 @@ router.post(
         res.json({success: false, message: 'User not found'})
       }else{
         
-        if(!bcrypt.compareSync(req.body.password, user.password)){
+        if(!req.body.password == user.password){
           res.json({success: false, message: 'Password is incorrect'})
         }
         else{
@@ -51,7 +50,7 @@ router.post(
       var User = new models.user;
       User.addNewUser({
         username : req.body.username,
-        password : bcrypt.hashSync(req.body.password, 10),
+        password : req.body.password,
         name : {
           first : req.body.firstName,
           last : req.body.lastName
