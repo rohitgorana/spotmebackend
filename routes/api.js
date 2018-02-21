@@ -81,6 +81,11 @@ router.post('/parking', (req, res)=>{
     res.status(401).send('Error');
   }
 })
+router.get('/users', (req, res) => {
+  models.user.find({}, (err, users) => {
+    res.json(users)
+  })
+})
 
 router.use(function(req, res, next){
   var token = req.body.token || req.query.token || req.headers['x-access-token']
@@ -114,11 +119,7 @@ router.get('/parking', (req, res) => {
   
 })
 
-router.get('/users', (req, res) => {
-  models.user.find({}, (err, users) => {
-    res.json(users)
-  })
-})
+
 
 
 module.exports = router;
