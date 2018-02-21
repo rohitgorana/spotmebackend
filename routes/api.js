@@ -17,7 +17,7 @@ router.post(
         res.json({success: false, message: 'User not found'})
       }else{
         
-        if(!req.body.password == user.password){
+        if(req.body.password != user.password){
           res.json({success: false, message: 'Password is incorrect'})
         }
         else{
