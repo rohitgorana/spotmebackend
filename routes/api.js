@@ -120,6 +120,12 @@ router.get('/users', (req, res) => {
   })
 })
 
+router.get('/vehicleinfo', (req, res) => {
+  models.vehicle.getinfo(req.query.no1, req.query.no2, (info) => {
+    res.json(info)
+  });
+})
+
 
 
 module.exports = router;
