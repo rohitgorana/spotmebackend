@@ -12,12 +12,14 @@ var parkingSchema = new Schema({
           index : '2d'
       }
   },
-  vacant : Number,
-  capacity : Number,
-  price : {
-      fixed : Number,
-      hourly: Number
-  }
+  vehicles:[{
+      class: String,
+      capacity: Number,
+      vacant : Number,
+      rate: Number,
+      rateDuration: {type: String, default: 'day'}
+  }]
+  
 }); 
 
 parkingSchema.statics.getSuggestion = function(point, res){

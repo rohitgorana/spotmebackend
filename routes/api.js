@@ -1,8 +1,17 @@
-const express = require('express')
-const router = express.Router()
-const models = require('../models')
-var config = require('../core/config');
+var express = require('express')
+var router = express.Router()
+var models = require('../models')
 var jwt = require('jsonwebtoken')
+var config = require('../core/config');
+var authenticate = require('../core/auth')
+var vehicleRouter = require('./vehicle')
+var parkingRouter = require('./parking')
+var userRouter = require('./user')
+
+
+router.use('/vehicle', vehicleRouter);
+router.use('/parking', parkingRouter);
+router.use('/user', userRouter);
 
 router.post(
   '/auth',
@@ -43,88 +52,10 @@ router.post(
 )
 
 
-router.post(
-  '/user',
-  (req, res) => {
-    if(req.body.username){
-      var User = new models.user;
-      User.addNewUser({
-        username : req.body.username,
-        password : req.body.password,
-        name : {
-          first : req.body.firstName,
-          last : req.body.lastName
-        }
-      })
-
-      res.status(200).send('Success');
-
-    }
-    else{
-      res.status(401).send('Error')
-    }
-  }
-)
-
-router.post('/parking', (req, res)=>{
-  if(req.body.address){
-    var Parking = new models.parking;
-    Parking.addNewParking({
-      name: req.body.name,
-      address: req.body.address,
-      capacity : req.body.capacity,
-      location : [req.body.lng, req.body.lat]
-    })
-    res.status(200).send('Success');
-  }
-  else{
-    res.status(401).send('Error');
-  }
-})
 
 
-router.use(function(req, res, next){
-  var token = req.body.token || req.query.token || req.headers['x-access-token']
 
-  if(token){
-    jwt.verify(token, config.secret, function(err, decoded){
-      if(err){
-        return res.json({success:false, message: 'Failed to authenticate'})
-      } else {
-        req.decoded = decoded;
-        next();
-      }
-    })
-  } else {
-    return res.status(403).send({
-      success : false,
-      message: 'Token Not Provided'
-    })
-  }
 
-})
-
-router.get('/logout', 
-function(req, res){
-  //TODO : logout
-  res.redirect('/');
-});
-
-router.get('/parking', (req, res) => {
-  models.parking.getSuggestion([req.query.lng, req.query.lat], res);
-  
-})
-router.get('/users', (req, res) => {
-  models.user.find({}, (err, users) => {
-    res.json(users)
-  })
-})
-
-router.get('/vehicleinfo', (req, res) => {
-  models.vehicle.getinfo(req.query.no1, req.query.no2, (info) => {
-    res.json(info)
-  });
-})
 
 
 

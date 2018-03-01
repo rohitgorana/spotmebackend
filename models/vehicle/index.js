@@ -1,6 +1,10 @@
 var http = require('https')
 var jsdom = require('jsdom')
+var mongoose = require('mongoose')
+var Schema = mongoose.Schema;
 var parseString = require('xml2js').parseString
+
+
 const { JSDOM } = jsdom
 const url = "https://parivahan.gov.in/rcdlstatus/vahan/rcDlHome.xhtml"
 var ReqOptions = {
@@ -43,6 +47,13 @@ var getdata = function (options, load, callback) {
     req.end();
 }
 
+
+var VehicleClassSchema = new Schema({
+    name: String,
+}); 
+
+
+
 const Vehicle = {
     getinfo: (no1, no2, callback) =>{
         http.get(url, res => {
@@ -56,9 +67,9 @@ const Vehicle = {
                 formid = encodeURIComponent(dom.window.document.querySelectorAll("button")[1].name)
                 viewstate = encodeURIComponent(dom.window.document.querySelectorAll("input")[3].value)
                 ReqOptions.headers.Cookie = res.headers["set-cookie"][0]
-                getdata(ReqOptions, `javax.faces.partial.ajax=true&javax.faces.source=form_rcdl%3Atf_reg_no1&javax.faces.partial.execute=form_rcdl%3Atf_reg_no1&javax.faces.partial.render=form_rcdl%3Atf_reg_no1&javax.faces.behavior.event=valueChange&javax.faces.partial.event=change&form_rcdl=form_rcdl&form_rcdl%3Atf_reg_no1=DL1VC&form_rcdl%3Atf_reg_no2=&javax.faces.ViewState=${viewstate}`, function(result){
-                    getdata(ReqOptions, `javax.faces.partial.ajax=true&javax.faces.source=form_rcdl%3Atf_reg_no2&javax.faces.partial.execute=form_rcdl%3Atf_reg_no2&javax.faces.partial.render=form_rcdl%3Atf_reg_no2&javax.faces.behavior.event=valueChange&javax.faces.partial.event=change&form_rcdl=form_rcdl&form_rcdl%3Atf_reg_no1=DL1VC&form_rcdl%3Atf_reg_no2=2216&javax.faces.ViewState=${viewstate}`, function(result){
-                        getdata(ReqOptions, `javax.faces.partial.ajax=true&javax.faces.source=${formid}&javax.faces.partial.execute=%40all&javax.faces.partial.render=form_rcdl%3Apnl_show+form_rcdl%3Apg_show+form_rcdl%3Arcdl_pnl&${formid}=${formid}&form_rcdl=form_rcdl&form_rcdl%3Atf_reg_no1=DL1VC&form_rcdl%3Atf_reg_no2=2216&javax.faces.ViewState=${viewstate}`, function(result){
+                getdata(ReqOptions, `javax.faces.partial.ajax=true&javax.faces.source=form_rcdl%3Atf_reg_no1&javax.faces.partial.execute=form_rcdl%3Atf_reg_no1&javax.faces.partial.render=form_rcdl%3Atf_reg_no1&javax.faces.behavior.event=valueChange&javax.faces.partial.event=change&form_rcdl=form_rcdl&form_rcdl%3Atf_reg_no1=${no1}&form_rcdl%3Atf_reg_no2=&javax.faces.ViewState=${viewstate}`, function(result){
+                    getdata(ReqOptions, `javax.faces.partial.ajax=true&javax.faces.source=form_rcdl%3Atf_reg_no2&javax.faces.partial.execute=form_rcdl%3Atf_reg_no2&javax.faces.partial.render=form_rcdl%3Atf_reg_no2&javax.faces.behavior.event=valueChange&javax.faces.partial.event=change&form_rcdl=form_rcdl&form_rcdl%3Atf_reg_no1=${no1}&form_rcdl%3Atf_reg_no2=${no2}&javax.faces.ViewState=${viewstate}`, function(result){
+                        getdata(ReqOptions, `javax.faces.partial.ajax=true&javax.faces.source=${formid}&javax.faces.partial.execute=%40all&javax.faces.partial.render=form_rcdl%3Apnl_show+form_rcdl%3Apg_show+form_rcdl%3Arcdl_pnl&${formid}=${formid}&form_rcdl=form_rcdl&form_rcdl%3Atf_reg_no1=${no1}&form_rcdl%3Atf_reg_no2=${no2}&javax.faces.ViewState=${viewstate}`, function(result){
                             dom = new JSDOM(result['partial-response'].changes[0].update[1]['_'])
                             var domData = dom.window.document.querySelectorAll("td")
                             
@@ -81,7 +92,12 @@ const Vehicle = {
         
             })
         })
-    }
+    },
+
+    vehicleClass: mongoose.model('VechicleClass', VehicleClassSchema, 'vehicle_class'),
+
+
+
 }
 
 module.exports = Vehicle;

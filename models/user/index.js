@@ -8,7 +8,24 @@ var userSchema = new Schema({
   name : {
     first : String,
     last : String
-  }
+  },
+  vehicles : [{
+    regNo: {
+      code: String,
+      number: String
+    },
+    class: String,
+    fuel: String,
+    model: String,
+
+  }],
+  accommodations : [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Parking'
+    }
+  ]
+
 });
 
 
@@ -19,6 +36,8 @@ userSchema.methods.addNewUser = function(user){
 
     this.save();
 }
+
+
 
 
 var User = mongoose.model('User', userSchema);
