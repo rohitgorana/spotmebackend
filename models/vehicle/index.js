@@ -81,8 +81,9 @@ const Vehicle = {
                             for(var i=0; i<domData.length; i=i+2){
                                 data[domData[i].firstChild.innerHTML] = domData[i+1].innerHTML;
                             }
-        
+                            console.log('\n\nData: \n', data)
                             callback(data);
+
                             
                         })
         
