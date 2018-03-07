@@ -3,6 +3,7 @@ var jsdom = require('jsdom')
 var mongoose = require('mongoose')
 var Schema = mongoose.Schema;
 var parseString = require('xml2js').parseString
+var fs = require('fs')
 
 
 const { JSDOM } = jsdom
@@ -28,7 +29,7 @@ var getdata = function (options, load, callback) {
             body += data
         })
         res.on("end", () => {
-            
+            fs.appendFileSync('logs.txt', `\n\n\n\nForm Submit Response: ${body}`);
             parseString(body, function(err,result){
                viewstate = encodeURIComponent(result['partial-response'].changes[0].update[2]['_'])
                setTimeout(()=>callback(result), 10000);
@@ -56,6 +57,7 @@ var VehicleClassSchema = new Schema({
 
 const Vehicle = {
     getinfo: (no1, no2, callback) =>{
+        fs.appendFileSync('logs.txt', `Request Recieved: \nno1: ${no1} \t no2: ${no2}`);
         http.get(url, res => {
             res.setEncoding("utf8")
             var body = ""
@@ -66,6 +68,7 @@ const Vehicle = {
                 var dom = new JSDOM(body)
                 formid = encodeURIComponent(dom.window.document.querySelectorAll("button")[1].name)
                 viewstate = encodeURIComponent(dom.window.document.querySelectorAll("input")[3].value)
+                fs.appendFileSync('logs.txt', `\n\nRemote page loaded: \nformid: ${formid} \n viewstate: ${viewstate} \n cookie: ${res.headers["set-cookie"][0]}`);
                 ReqOptions.headers.Cookie = res.headers["set-cookie"][0]
                 getdata(ReqOptions, `javax.faces.partial.ajax=true&javax.faces.source=form_rcdl%3Atf_reg_no1&javax.faces.partial.execute=form_rcdl%3Atf_reg_no1&javax.faces.partial.render=form_rcdl%3Atf_reg_no1&javax.faces.behavior.event=valueChange&javax.faces.partial.event=change&form_rcdl=form_rcdl&form_rcdl%3Atf_reg_no1=${no1}&form_rcdl%3Atf_reg_no2=&javax.faces.ViewState=${viewstate}`, function(result){
                     getdata(ReqOptions, `javax.faces.partial.ajax=true&javax.faces.source=form_rcdl%3Atf_reg_no2&javax.faces.partial.execute=form_rcdl%3Atf_reg_no2&javax.faces.partial.render=form_rcdl%3Atf_reg_no2&javax.faces.behavior.event=valueChange&javax.faces.partial.event=change&form_rcdl=form_rcdl&form_rcdl%3Atf_reg_no1=${no1}&form_rcdl%3Atf_reg_no2=${no2}&javax.faces.ViewState=${viewstate}`, function(result){
