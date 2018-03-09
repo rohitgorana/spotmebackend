@@ -16,11 +16,11 @@ router.post('/', (req, res) => {
           }
         })
   
-        res.status(200).send('Success');
+        res.json({success: true});
   
       }
       else{
-        res.status(401).send('Error')
+        res.json({success:false, message: "Something went wrong!"});
       }
     }
 )
@@ -40,7 +40,10 @@ router.post('/vehicle', authenticate, (req, res)=>{
             }
         }
     }, {new: true}, function(err, user){
-        res.json(user)
+        if(err)
+            res.json({success:false, message:err})
+        else
+            res.json({success:true, user})
     })
 })
 

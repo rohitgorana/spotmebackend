@@ -27,6 +27,13 @@ router.post('/', authenticate, (req,res) =>{
         model: req.body.model
       }
     }
+  }, (err, user)=>{
+    if(err){
+      res.json({success: false, message: err})
+    }
+    else{
+      res.json({success: true})
+    }
   })
 })
 
