@@ -18,6 +18,7 @@ router.get('/info', authenticate, (req, res) => {
 })
 
 router.post('/', authenticate, (req,res) =>{
+  console.log(req.body)
   user.findOneAndUpdate({username: res.locals.user.username}, {
     "$push" :{
       "vehicles" : {
