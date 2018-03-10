@@ -28,12 +28,15 @@ router.post('/', authenticate, (req,res) =>{
         model: req.body.model
       }
     }
+  },{
+    new: true,
+    fields: {vehicles:1}
   }, (err, user)=>{
     if(err){
       res.json({success: false, message: err})
     }
     else{
-      res.json({success: true})
+      res.json({success: true, user})
     }
   })
 })

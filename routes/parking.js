@@ -11,7 +11,7 @@ router.post('/', authenticate, (req, res)=>{
       Parking.addNewParking({
         name: req.body.name,
         address: req.body.address,
-        location : [req.body.lng, req.body.lat]
+        location : [req.body.location.longitude, req.body.location.latitude]
       })
       console.log('Inserted parking adding reference to user...')
       user.findOneAndUpdate({username: res.locals.user.username},{
@@ -19,12 +19,12 @@ router.post('/', authenticate, (req, res)=>{
               accommodations : Parking._id
           }
       },{new: true}, function(err, user){
-          res.status(200).send("Success");
+          res.json({success:true, parking:{_id: Parking._id}});
       })
       
     }
     else{
-      res.status(401).send('Error');
+      res.json({success:false, message: 'Something went wrong!'});
     }
 })
 
@@ -43,8 +43,10 @@ router.post('/vehicle', authenticate, (req, res) =>{
                     }
                 }
             }, {new: true}, function(err, parking){
-                if(err) console.log(err);
-                res.json(parking)
+                if(err)
+                    res.json({success: false, message: err})
+                else
+                    res.json({success: true, parking})
                 
             })
         }
