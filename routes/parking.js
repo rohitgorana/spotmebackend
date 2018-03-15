@@ -19,7 +19,12 @@ router.post('/', authenticate, (req, res)=>{
               accommodations : Parking._id
           }
       },{new: true}, function(err, user){
-          res.json({success:true, parking:{_id: Parking._id}});
+        var list = user.accommodations.map((accomodation)=>{
+            parking.findOne({_id: accomodation._id}, (err, parkinglot)=>{
+                return parkinglot
+            })
+        })
+        res.json({success: true, parkings: list})
       })
       
     }
@@ -49,6 +54,20 @@ router.post('/vehicle', authenticate, (req, res) =>{
                     res.json({success: true, parking})
                 
             })
+        }
+    })
+})
+
+router.get('/', authenticate, (req, res) => {
+    user.findOne({username: res.locals.user.username},(err, user)=>{
+        if(err) console.log(err);
+        if(!err && user){
+            var list = user.accommodations.map((accomodation)=>{
+                parking.findOne({_id: accomodation._id}, (err, parkinglot)=>{
+                    return parkinglot
+                })
+            })
+            res.json({success: true, parkings: list})
         }
     })
 })

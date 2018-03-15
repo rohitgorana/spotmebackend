@@ -36,8 +36,17 @@ router.post('/', authenticate, (req,res) =>{
       res.json({success: false, message: err})
     }
     else{
-      res.json({success: true, user})
+      res.json({success: true, vehicles: user.vehicles})
     }
+  })
+})
+
+router.get('/', authenticate, (req,res)=>{
+  user.findOne({username:res.locals.user.username}, (err, user) => {
+    if(err) console.log(err);
+        if(!err && user){
+          res.json({success: true, vehicles: user.vehicles})
+        }
   })
 })
 
