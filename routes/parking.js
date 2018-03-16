@@ -62,8 +62,10 @@ router.get('/', authenticate, (req, res) => {
     user.findOne({username: res.locals.user.username},(err, user)=>{
         if(err) console.log(err);
         if(!err && user){
-            var list = user.accommodations.map((accomodation)=>{
-                parking.findOne({_id: accomodation._id}, (err, parkinglot)=>{
+            var list = user.accommodations.map((accommodation)=>{
+                console.log(accommodation)
+                parking.findById(accommodation, (err, parkinglot)=>{
+                    console.log(parkinglot)
                     return parkinglot
                 })
             })
