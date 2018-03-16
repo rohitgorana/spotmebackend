@@ -32,7 +32,7 @@ var getdata = function (options, load, callback) {
             console.log(`\n\n\n\nForm Submit Response: ${body}`);
             parseString(body, function(err,result){
                viewstate = encodeURIComponent(result['partial-response'].changes[0].update[2]['_'])
-               setTimeout(()=>callback(result), 10000);
+               setTimeout(()=>callback(result), 5000);
             })
             
             
