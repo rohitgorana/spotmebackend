@@ -59,11 +59,11 @@ router.post('/vehicle', authenticate, (req, res) =>{
 })
 
 router.get('/', authenticate, (req, res) => {
-    user.findOne({username: res.locals.user.username},async (err, user)=>{
+    user.findOne({username: res.locals.user.username},async function(err, user){
         if(err) console.log(err);
         if(!err && user){
 
-            var list = await Promise.all(user.accommodations.map(async(item) => {
+            var list = await Promise.all(user.accommodations.map(async function(item){
                 var accomodation = null;
                 await parking.findById(item, (err, parkinglot)=> {
                     accomodation = parkinglot;
