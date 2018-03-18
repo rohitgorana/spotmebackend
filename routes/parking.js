@@ -1,3 +1,5 @@
+var mongoose = require('mongoose')
+
 var express = require('express');
 var router = express.Router();
 var parking = require('../models/parking')
@@ -62,14 +64,13 @@ router.get('/', authenticate, (req, res) => {
     user.findOne({username: res.locals.user.username}, function(err, user){
         if(err) console.log(err);
         if(!err && user){
-
-            Promise.all(user.accommodations.map(async function(item){
-                var accomodation = null;
-                await parking.findById(item, (err, parkinglot)=> {
-                    accomodation = parkinglot;
-                })
-                return accomodation;
-            })).then((list)=>{
+            var accommodations = user.accommodations.map((item)=> mongoose.Types.ObjectId(item))
+            
+            parking.find({
+                '_id':{
+                    $in: accommodations
+                }
+            }, (err, list)=>{
                 res.json({success: true, parkings: list})
             })
 
