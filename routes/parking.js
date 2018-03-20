@@ -37,7 +37,7 @@ router.post('/', authenticate, (req, res)=>{
 
 router.post('/vehicle', authenticate, (req, res) =>{
     user.findOne({username: res.locals.user.username, accommodations : req.body.parking}, (err, user)=>{
-        if(err) console.log(err);
+        if(err) res.json({success: false, message: err})
         if(!err && user){
             parking.findByIdAndUpdate(req.body.parking, {
                 $push:{
