@@ -22,11 +22,22 @@ var parkingSchema = new Schema({
   
 }); 
 
-parkingSchema.statics.getSuggestion = function(point, res){
-    console.log(point)
-    this.find({ 'location.coordinates' : { '$near' : point, '$maxDistance': 50/6371 } }).exec(function(err, parkings){
-        res.status(200).send(JSON.stringify(parkings));
-    })
+parkingSchema.statics.getSuggestion = function(point, vehicle, callback){
+    this.find({
+        'location.coordinates': {'$near': point, '$maxDistance': 50/6371}, 
+        'vehicles': {
+            $elemMatch:{
+                class: {
+                    $regex : `.*${vehicle.substring(0, vehicle.lastIndexOf(' ')).toLowerCase()}.*`
+                }, 
+                vacant: {
+                    $gt:0
+                }
+            }
+        }
+    }).exec(callback)
+
+    
 }
 
 parkingSchema.methods.addNewParking = function(parking){

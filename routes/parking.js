@@ -81,7 +81,9 @@ router.get('/', authenticate, (req, res) => {
 })
   
 router.get('/nearby', authenticate, (req, res) => {
-    parking.getSuggestion([req.query.lng, req.query.lat], res);
+    parking.getSuggestion([req.query.lng, req.query.lat], req.query.vehicle, (err, parkings)=>{
+        res.status(200).send(JSON.stringify(parkings));
+    });
     
 })
 
